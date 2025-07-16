@@ -9,9 +9,6 @@ import (
 	"github.com/shirou/gopsutil/v3/cpu"
 )
 
-//go:embed icon.png
-var appIcon []byte
-
 //go:embed cats/dark_cat_0.png
 var darkCat0 []byte
 
@@ -39,7 +36,6 @@ func onReady() {
 	systray.SetIcon(darkCat0)
 	systray.SetTitle("Systray CAT")
 	// systray.SetTooltip("CPU x%")
-	// addCPUItem()
 	addQuitItem()
 
 	go func() {
@@ -106,11 +102,6 @@ func animateIcon() {
 		lastAnimationId = 0
 		// fmt.Println("Update 0")
 	}
-}
-
-func addCPUItem() {
-	cpuI = systray.AddMenuItem("CPU: 0%", "This is your CPU thing")
-	cpuI.SetIcon(appIcon)
 }
 
 func addQuitItem() {
