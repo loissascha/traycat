@@ -48,12 +48,12 @@ func onReady() {
 		}
 	}()
 
-	go func() {
-		for {
-			updateCPUPercentDisplay()
-			time.Sleep(5 * time.Second)
-		}
-	}()
+	// go func() {
+	// 	for {
+	// 		updateCPUPercentDisplay()
+	// 		time.Sleep(5 * time.Second)
+	// 	}
+	// }()
 }
 
 func animateIcon() {
