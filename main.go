@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+	"flag"
 	"fmt"
 	"time"
 
@@ -24,11 +25,30 @@ var darkCat3 []byte
 //go:embed cats/dark_cat_4.png
 var darkCat4 []byte
 
+//go:embed cats/light_cat_0.png
+var lightCat0 []byte
+
+//go:embed cats/light_cat_1.png
+var lightCat1 []byte
+
+//go:embed cats/light_cat_2.png
+var lightCat2 []byte
+
+//go:embed cats/light_cat_3.png
+var lightCat3 []byte
+
+//go:embed cats/light_cat_4.png
+var lightCat4 []byte
+
 var cpuI *systray.MenuItem
 
+var theme *string
 var lastAnimationId = 0
 
 func main() {
+	theme = flag.String("theme", "dark", "Use dark or light for either dark or light themed cat")
+	flag.Parse()
+
 	systray.Run(onReady, onExit)
 }
 
@@ -82,23 +102,43 @@ func onReady() {
 func animateIcon() {
 	switch lastAnimationId {
 	case 0:
-		systray.SetIcon(darkCat1)
+		if *theme == "dark" {
+			systray.SetIcon(darkCat1)
+		} else {
+			systray.SetIcon(lightCat1)
+		}
 		lastAnimationId = 1
 		// fmt.Println("Update 1")
 	case 1:
-		systray.SetIcon(darkCat2)
+		if *theme == "dark" {
+			systray.SetIcon(darkCat2)
+		} else {
+			systray.SetIcon(lightCat2)
+		}
 		lastAnimationId = 2
 		// fmt.Println("Update 2")
 	case 2:
-		systray.SetIcon(darkCat3)
+		if *theme == "dark" {
+			systray.SetIcon(darkCat3)
+		} else {
+			systray.SetIcon(lightCat3)
+		}
 		lastAnimationId = 3
 		// fmt.Println("Update 3")
 	case 3:
-		systray.SetIcon(darkCat4)
+		if *theme == "dark" {
+			systray.SetIcon(darkCat4)
+		} else {
+			systray.SetIcon(lightCat4)
+		}
 		lastAnimationId = 4
 		// fmt.Println("Update 4")
 	case 4:
-		systray.SetIcon(darkCat0)
+		if *theme == "dark" {
+			systray.SetIcon(darkCat0)
+		} else {
+			systray.SetIcon(lightCat0)
+		}
 		lastAnimationId = 0
 		// fmt.Println("Update 0")
 	}
