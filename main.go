@@ -14,22 +14,10 @@ import (
 //go:embed cats/dark_png/*.png
 var darkCats embed.FS
 
+//go:embed cats/light_png/*.png
+var lightCats embed.FS
+
 var catSprites map[int][]byte
-
-//go:embed cats/light_cat_0.png
-var lightCat0 []byte
-
-//go:embed cats/light_cat_1.png
-var lightCat1 []byte
-
-//go:embed cats/light_cat_2.png
-var lightCat2 []byte
-
-//go:embed cats/light_cat_3.png
-var lightCat3 []byte
-
-//go:embed cats/light_cat_4.png
-var lightCat4 []byte
 
 var cpuI *systray.MenuItem
 
@@ -46,6 +34,14 @@ func main() {
 	if *theme == "dark" {
 		for i := range 5 {
 			cat, err := darkCats.ReadFile(fmt.Sprintf("cats/dark_png/cat_%d.png", i))
+			if err != nil {
+				panic(fmt.Sprintf("no cat %d", i))
+			}
+			catSprites[i] = cat
+		}
+	} else {
+		for i := range 5 {
+			cat, err := lightCats.ReadFile(fmt.Sprintf("cats/light_png/cat_%d.png", i))
 			if err != nil {
 				panic(fmt.Sprintf("no cat %d", i))
 			}
