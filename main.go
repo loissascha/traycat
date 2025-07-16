@@ -44,6 +44,7 @@ var cpuI *systray.MenuItem
 
 var theme *string
 var lastAnimationId = 0
+var ms = 150 * time.Millisecond
 
 func main() {
 	theme = flag.String("theme", "dark", "Use dark or light for either dark or light themed cat")
@@ -55,19 +56,17 @@ func main() {
 func onReady() {
 	systray.SetIcon(darkCat0)
 	systray.SetTitle("Systray CAT")
-	// systray.SetTooltip("CPU x%")
 	addQuitItem()
 
 	go func() {
 		for {
-			animateIcon()
 			percent, err := cpu.Percent(0, false)
 			if err != nil {
 				fmt.Println("Error:", err)
 				return
 			}
 			totalPercent := percent[0]
-			ms := 150 * time.Millisecond
+			ms = 150 * time.Millisecond
 			if totalPercent > 10 {
 				ms = 120 * time.Millisecond
 			}
@@ -83,20 +82,17 @@ func onReady() {
 			if totalPercent > 50 {
 				ms = 40 * time.Millisecond
 			}
-
-			// systray.SetTooltip(fmt.Sprintf("CPU %.2f%%", totalPercent))
-			// fmt.Printf("Total CPU Usage: %.2f%%\n", percent[0])
-			// fmt.Println("Sleep time:", ms)
-			time.Sleep(ms)
+			fmt.Printf("CPU usage: %.2f%% MS: %v\n", totalPercent, ms)
+			time.Sleep(1 * time.Second)
 		}
 	}()
 
-	// go func() {
-	// 	for {
-	// 		updateCPUPercentDisplay()
-	// 		time.Sleep(5 * time.Second)
-	// 	}
-	// }()
+	go func() {
+		for {
+			animateIcon()
+			time.Sleep(ms)
+		}
+	}()
 }
 
 func animateIcon() {
