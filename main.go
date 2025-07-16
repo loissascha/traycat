@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	_ "embed"
 	"flag"
 	"fmt"
@@ -10,20 +11,10 @@ import (
 	"github.com/shirou/gopsutil/v3/cpu"
 )
 
-//go:embed cats/dark_cat_0.png
-var darkCat0 []byte
+//go:embed cats/dark_png/*.png
+var darkCats embed.FS
 
-//go:embed cats/dark_cat_1.png
-var darkCat1 []byte
-
-//go:embed cats/dark_cat_2.png
-var darkCat2 []byte
-
-//go:embed cats/dark_cat_3.png
-var darkCat3 []byte
-
-//go:embed cats/dark_cat_4.png
-var darkCat4 []byte
+var catSprites map[int][]byte
 
 //go:embed cats/light_cat_0.png
 var lightCat0 []byte
@@ -50,11 +41,23 @@ func main() {
 	theme = flag.String("theme", "dark", "Use dark or light for either dark or light themed cat")
 	flag.Parse()
 
+	catSprites = make(map[int][]byte)
+
+	if *theme == "dark" {
+		for i := range 5 {
+			cat, err := darkCats.ReadFile(fmt.Sprintf("cats/dark_png/cat_%d.png", i))
+			if err != nil {
+				panic(fmt.Sprintf("no cat %d", i))
+			}
+			catSprites[i] = cat
+		}
+	}
+
 	systray.Run(onReady, onExit)
 }
 
 func onReady() {
-	systray.SetIcon(darkCat0)
+	systray.SetIcon(catSprites[0])
 	systray.SetTitle("Systray CAT")
 	addQuitItem()
 
@@ -96,65 +99,23 @@ func onReady() {
 }
 
 func animateIcon() {
-	switch lastAnimationId {
-	case 0:
-		if *theme == "dark" {
-			systray.SetIcon(darkCat1)
-		} else {
-			systray.SetIcon(lightCat1)
-		}
-		lastAnimationId = 1
-		// fmt.Println("Update 1")
-	case 1:
-		if *theme == "dark" {
-			systray.SetIcon(darkCat2)
-		} else {
-			systray.SetIcon(lightCat2)
-		}
-		lastAnimationId = 2
-		// fmt.Println("Update 2")
-	case 2:
-		if *theme == "dark" {
-			systray.SetIcon(darkCat3)
-		} else {
-			systray.SetIcon(lightCat3)
-		}
-		lastAnimationId = 3
-		// fmt.Println("Update 3")
-	case 3:
-		if *theme == "dark" {
-			systray.SetIcon(darkCat4)
-		} else {
-			systray.SetIcon(lightCat4)
-		}
-		lastAnimationId = 4
-		// fmt.Println("Update 4")
-	case 4:
-		if *theme == "dark" {
-			systray.SetIcon(darkCat0)
-		} else {
-			systray.SetIcon(lightCat0)
-		}
+	lastAnimationId++
+	p, ok := catSprites[lastAnimationId]
+	if !ok {
+		p = catSprites[0]
 		lastAnimationId = 0
-		// fmt.Println("Update 0")
 	}
+	systray.SetIcon(p)
 }
 
 func addQuitItem() {
 	mQuit := systray.AddMenuItem("Quit", "Quit the whole app")
-	// Sets the icon of a menu item.
-	// mQuit.SetIcon(icon.Data)
 	go func() {
 		for range mQuit.ClickedCh {
 			fmt.Println("Requesting quit")
 			systray.Quit()
 		}
 	}()
-}
-
-func updateCPUPercentDisplay() {
-	systray.SetTooltip("CPU 1%")
-	cpuI.SetTitle("CPU: 1%")
 }
 
 func onExit() {
