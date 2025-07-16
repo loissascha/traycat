@@ -26,7 +26,7 @@ var lastAnimationId = 0
 var ms = 150 * time.Millisecond
 
 func main() {
-	theme = flag.String("theme", "dark", "Use dark or light for either dark or light themed cat")
+	theme = flag.String("theme", "dark", "Use dark or light themed cat")
 	flag.Parse()
 
 	catSprites = make(map[int][]byte)
@@ -54,7 +54,6 @@ func main() {
 
 func onReady() {
 	systray.SetIcon(catSprites[0])
-	systray.SetTitle("Systray CAT")
 	addQuitItem()
 
 	go func() {
@@ -108,13 +107,11 @@ func addQuitItem() {
 	mQuit := systray.AddMenuItem("Quit", "Quit the whole app")
 	go func() {
 		for range mQuit.ClickedCh {
-			fmt.Println("Requesting quit")
 			systray.Quit()
 		}
 	}()
 }
 
 func onExit() {
-	now := time.Now()
-	fmt.Println("Exit at", now.String())
+	fmt.Println("Off to chase a red dot...")
 }
