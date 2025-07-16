@@ -82,7 +82,7 @@ func onReady() {
 			if totalPercent > 50 {
 				ms = 40 * time.Millisecond
 			}
-			fmt.Printf("CPU usage: %.2f%% MS: %v\n", totalPercent, ms)
+			// fmt.Printf("CPU usage: %.2f%% MS: %v\n", totalPercent, ms)
 			time.Sleep(1 * time.Second)
 		}
 	}()
