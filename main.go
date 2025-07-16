@@ -14,10 +14,21 @@ import (
 //go:embed cats/dark_png/*.png
 var darkCatsPng embed.FS
 
+//go:embed cats/dark_ico/*.ico
+var darkCatsIco embed.FS
+
 //go:embed cats/light_png/*.png
 var lightCatsPng embed.FS
 
-var catSprites map[int][]byte
+//go:embed cats/light_ico/*.ico
+var lightCatsIco embed.FS
+
+type Sprite struct {
+	png []byte
+	ico []byte
+}
+
+var catSprites map[int]Sprite
 
 var cpuI *systray.MenuItem
 
@@ -29,7 +40,7 @@ func main() {
 	theme = flag.String("theme", "dark", "Use dark or light themed cat")
 	flag.Parse()
 
-	catSprites = make(map[int][]byte)
+	catSprites = make(map[int]Sprite)
 
 	if *theme == "dark" {
 		for i := range 5 {
@@ -37,7 +48,14 @@ func main() {
 			if err != nil {
 				panic(fmt.Sprintf("no cat %d", i))
 			}
-			catSprites[i] = cat
+			catIco, err := darkCatsIco.ReadFile(fmt.Sprintf("cats/dark_ico/cat_%d.ico", i))
+			if err != nil {
+				panic(fmt.Sprintf("no cat %d", i))
+			}
+			catSprites[i] = Sprite{
+				png: cat,
+				ico: catIco,
+			}
 		}
 	} else {
 		for i := range 5 {
@@ -45,7 +63,14 @@ func main() {
 			if err != nil {
 				panic(fmt.Sprintf("no cat %d", i))
 			}
-			catSprites[i] = cat
+			catIco, err := lightCatsIco.ReadFile(fmt.Sprintf("cats/light_ico/cat_%d.ico", i))
+			if err != nil {
+				panic(fmt.Sprintf("no cat %d", i))
+			}
+			catSprites[i] = Sprite{
+				png: cat,
+				ico: catIco,
+			}
 		}
 	}
 
@@ -53,7 +78,7 @@ func main() {
 }
 
 func onReady() {
-	systray.SetIcon(catSprites[0])
+	systray.SetTemplateIcon(catSprites[0].ico, catSprites[0].png)
 	addQuitItem()
 
 	go func() {
@@ -100,7 +125,7 @@ func animateIcon() {
 		p = catSprites[0]
 		lastAnimationId = 0
 	}
-	systray.SetIcon(p)
+	systray.SetTemplateIcon(p.ico, p.png)
 }
 
 func addQuitItem() {
