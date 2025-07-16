@@ -10,13 +10,12 @@ import (
 
 func main() {
 	systray.Run(onReady, onExit)
-	fmt.Println("Finished app")
 }
 
 func onReady() {
 	systray.SetIcon(icon.Data)
-	systray.SetTitle("Awesome App")
-	systray.SetTooltip("Pretty awesome超级棒")
+	systray.SetTitle("Systray CAT")
+	systray.SetTooltip("CPU x%")
 	addQuitItem()
 }
 
