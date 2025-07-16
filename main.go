@@ -1,22 +1,37 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"time"
 
 	"fyne.io/systray"
-	"fyne.io/systray/example/icon"
 )
+
+//go:embed icon.png
+var appIcon []byte
 
 func main() {
 	systray.Run(onReady, onExit)
 }
 
 func onReady() {
-	systray.SetIcon(icon.Data)
+	systray.SetIcon(appIcon)
 	systray.SetTitle("Systray CAT")
 	systray.SetTooltip("CPU x%")
 	addQuitItem()
+
+	// go func() {
+	// 	for {
+	// 		updateCPUPercent()
+	// 		time.Sleep(1 * time.Second)
+	// 	}
+	// }()
+}
+
+func addCPUItem() {
+	cpuI := systray.AddMenuItem("CPU: 1%", "This is your CPU thing")
+	cpuI.SetIcon(appIcon)
 }
 
 func addQuitItem() {
@@ -29,6 +44,12 @@ func addQuitItem() {
 			systray.Quit()
 		}
 	}()
+}
+
+func updateCPUPercent() {
+	systray.ResetMenu()
+	addCPUItem()
+	addQuitItem()
 }
 
 func onExit() {
