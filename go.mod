@@ -1,4 +1,4 @@
-module github.com/loissascha/go-systray-test
+module github.com/loissascha/traycat
 
 go 1.24.1
 
