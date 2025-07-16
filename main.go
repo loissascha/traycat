@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"fyne.io/systray"
+	"github.com/shirou/gopsutil/v3/cpu"
 )
 
 //go:embed icon.png
@@ -38,13 +39,38 @@ func onReady() {
 	systray.SetIcon(darkCat0)
 	systray.SetTitle("Systray CAT")
 	systray.SetTooltip("CPU x%")
-	addCPUItem()
+	// addCPUItem()
 	addQuitItem()
 
 	go func() {
 		for {
 			animateIcon()
-			time.Sleep(150 * time.Millisecond)
+			percent, err := cpu.Percent(0, false)
+			if err != nil {
+				fmt.Println("Error:", err)
+				return
+			}
+			totalPercent := percent[0]
+			ms := 150 * time.Millisecond
+			if totalPercent > 10 {
+				ms = 120 * time.Millisecond
+			}
+			if totalPercent > 20 {
+				ms = 100 * time.Millisecond
+			}
+			if totalPercent > 30 {
+				ms = 80 * time.Millisecond
+			}
+			if totalPercent > 40 {
+				ms = 60 * time.Millisecond
+			}
+			if totalPercent > 50 {
+				ms = 40 * time.Millisecond
+			}
+
+			fmt.Printf("Total CPU Usage: %.2f%%\n", percent[0])
+			fmt.Println("Sleep time:", ms)
+			time.Sleep(ms)
 		}
 	}()
 
@@ -61,23 +87,23 @@ func animateIcon() {
 	case 0:
 		systray.SetIcon(darkCat1)
 		lastAnimationId = 1
-		fmt.Println("Update 1")
+		// fmt.Println("Update 1")
 	case 1:
 		systray.SetIcon(darkCat2)
 		lastAnimationId = 2
-		fmt.Println("Update 2")
+		// fmt.Println("Update 2")
 	case 2:
 		systray.SetIcon(darkCat3)
 		lastAnimationId = 3
-		fmt.Println("Update 3")
+		// fmt.Println("Update 3")
 	case 3:
 		systray.SetIcon(darkCat4)
 		lastAnimationId = 4
-		fmt.Println("Update 4")
+		// fmt.Println("Update 4")
 	case 4:
 		systray.SetIcon(darkCat0)
 		lastAnimationId = 0
-		fmt.Println("Update 0")
+		// fmt.Println("Update 0")
 	}
 }
 
