@@ -38,7 +38,7 @@ func main() {
 func onReady() {
 	systray.SetIcon(darkCat0)
 	systray.SetTitle("Systray CAT")
-	systray.SetTooltip("CPU x%")
+	// systray.SetTooltip("CPU x%")
 	// addCPUItem()
 	addQuitItem()
 
@@ -68,8 +68,9 @@ func onReady() {
 				ms = 40 * time.Millisecond
 			}
 
-			fmt.Printf("Total CPU Usage: %.2f%%\n", percent[0])
-			fmt.Println("Sleep time:", ms)
+			// systray.SetTooltip(fmt.Sprintf("CPU %.2f%%", totalPercent))
+			// fmt.Printf("Total CPU Usage: %.2f%%\n", percent[0])
+			// fmt.Println("Sleep time:", ms)
 			time.Sleep(ms)
 		}
 	}()
