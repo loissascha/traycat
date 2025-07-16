@@ -12,10 +12,10 @@ import (
 )
 
 //go:embed cats/dark_png/*.png
-var darkCats embed.FS
+var darkCatsPng embed.FS
 
 //go:embed cats/light_png/*.png
-var lightCats embed.FS
+var lightCatsPng embed.FS
 
 var catSprites map[int][]byte
 
@@ -33,7 +33,7 @@ func main() {
 
 	if *theme == "dark" {
 		for i := range 5 {
-			cat, err := darkCats.ReadFile(fmt.Sprintf("cats/dark_png/cat_%d.png", i))
+			cat, err := darkCatsPng.ReadFile(fmt.Sprintf("cats/dark_png/cat_%d.png", i))
 			if err != nil {
 				panic(fmt.Sprintf("no cat %d", i))
 			}
@@ -41,7 +41,7 @@ func main() {
 		}
 	} else {
 		for i := range 5 {
-			cat, err := lightCats.ReadFile(fmt.Sprintf("cats/light_png/cat_%d.png", i))
+			cat, err := lightCatsPng.ReadFile(fmt.Sprintf("cats/light_png/cat_%d.png", i))
 			if err != nil {
 				panic(fmt.Sprintf("no cat %d", i))
 			}
