@@ -11,14 +11,31 @@ import (
 //go:embed icon.png
 var appIcon []byte
 
+//go:embed cats/dark_cat_0.png
+var darkCat0 []byte
+
+//go:embed cats/dark_cat_1.png
+var darkCat1 []byte
+
+//go:embed cats/dark_cat_2.png
+var darkCat2 []byte
+
+//go:embed cats/dark_cat_3.png
+var darkCat3 []byte
+
+//go:embed cats/dark_cat_4.png
+var darkCat4 []byte
+
 var cpuI *systray.MenuItem
+
+var lastAnimationId = 0
 
 func main() {
 	systray.Run(onReady, onExit)
 }
 
 func onReady() {
-	systray.SetIcon(appIcon)
+	systray.SetIcon(darkCat0)
 	systray.SetTitle("Systray CAT")
 	systray.SetTooltip("CPU x%")
 	addCPUItem()
@@ -26,10 +43,42 @@ func onReady() {
 
 	go func() {
 		for {
+			animateIcon()
+			time.Sleep(150 * time.Millisecond)
+		}
+	}()
+
+	go func() {
+		for {
 			updateCPUPercentDisplay()
 			time.Sleep(5 * time.Second)
 		}
 	}()
+}
+
+func animateIcon() {
+	switch lastAnimationId {
+	case 0:
+		systray.SetIcon(darkCat1)
+		lastAnimationId = 1
+		fmt.Println("Update 1")
+	case 1:
+		systray.SetIcon(darkCat2)
+		lastAnimationId = 2
+		fmt.Println("Update 2")
+	case 2:
+		systray.SetIcon(darkCat3)
+		lastAnimationId = 3
+		fmt.Println("Update 3")
+	case 3:
+		systray.SetIcon(darkCat4)
+		lastAnimationId = 4
+		fmt.Println("Update 4")
+	case 4:
+		systray.SetIcon(darkCat0)
+		lastAnimationId = 0
+		fmt.Println("Update 0")
+	}
 }
 
 func addCPUItem() {
