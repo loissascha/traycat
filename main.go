@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	"fyne.io/systray"
+	"github.com/getlantern/systray"
 	"github.com/shirou/gopsutil/v3/cpu"
 )
 
@@ -35,6 +35,7 @@ var cpuI *systray.MenuItem
 var theme *string
 var lastAnimationId = 0
 var ms = 150 * time.Millisecond
+var ciItem *systray.MenuItem
 
 func main() {
 	theme = flag.String("theme", "dark", "Use dark or light themed cat")
@@ -78,7 +79,8 @@ func main() {
 }
 
 func onReady() {
-	systray.SetTemplateIcon(catSprites[0].ico, catSprites[0].png)
+	systray.SetIcon(catSprites[0].png)
+	ciItem = systray.AddMenuItem("CPU x%", "Current CPU usage")
 	addQuitItem()
 
 	go func() {
@@ -106,6 +108,7 @@ func onReady() {
 				ms = 40 * time.Millisecond
 			}
 			// fmt.Printf("CPU usage: %.2f%% MS: %v\n", totalPercent, ms)
+			ciItem.SetTitle(fmt.Sprintf("CPU %.2f%%", totalPercent))
 			time.Sleep(1 * time.Second)
 		}
 	}()
@@ -125,7 +128,7 @@ func animateIcon() {
 		p = catSprites[0]
 		lastAnimationId = 0
 	}
-	systray.SetTemplateIcon(p.ico, p.png)
+	systray.SetIcon(p.png)
 }
 
 func addQuitItem() {
