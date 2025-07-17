@@ -14,11 +14,11 @@ Increases speed based on your CPU usage.
 
 ## Installation
 
-If you want to install traycat into your ~/.local/bin directory, run the install.sh script `chmod +x install.sh & ./install.sh`
+If you want to install traycat into your *~/.local/bin* directory, run the *install.sh* script `chmod +x install.sh & ./install.sh`
 
 ## Autostart
 
-If you want traycat to automatically start on login, run the autostart.sh script `chmod +x autostart.sh & ./autostart.sh` 
+If you want traycat to automatically start on login, run the *autostart.sh* script `chmod +x autostart.sh & ./autostart.sh` 
 
 *This will also run the install.sh script as the autostart entry expects the traycat binary to be available in your ~/.local/bin directory*
 
