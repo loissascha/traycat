@@ -1,5 +1,8 @@
 #!/bin/bash
 
+chmod +x install.sh
+./install.sh
+
 mkdir -p ~/.config/autostart
 
 echo "[Desktop Entry]
