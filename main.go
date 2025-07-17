@@ -126,6 +126,8 @@ func stopRunningInstances() {
 }
 
 func installScript() {
+	fmt.Println("Installing traycat into your ~/.local/bin")
+
 	_, err := os.Stat("./traycat")
 	if os.IsNotExist(err) {
 		panic("You are trying to install traycat but there is no file called `traycat` in you current directory.")
