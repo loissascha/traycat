@@ -5,10 +5,14 @@ import (
 	_ "embed"
 	"flag"
 	"fmt"
+	"io"
+	"os"
+	"syscall"
 	"time"
 
 	"github.com/getlantern/systray"
 	"github.com/shirou/gopsutil/v3/cpu"
+	"github.com/shirou/gopsutil/v3/process"
 )
 
 //go:embed cats/dark_png/*.png
@@ -39,7 +43,24 @@ var ciItem *systray.MenuItem
 
 func main() {
 	theme = flag.String("theme", "dark", "Use dark or light themed cat")
+	install := flag.Bool("install", false, "Would you like to install the binary into your ~/.local/bin folder?")
+	autostart := flag.Bool("autostart", false, "Would you like to add an autostart script for traycat?")
 	flag.Parse()
+
+	stopRunningInstances()
+
+	if *install {
+		installScript()
+	}
+
+	if *autostart {
+		autostartScript()
+	}
+
+	if *install || *autostart {
+		fmt.Println("Done.")
+		return
+	}
 
 	catSprites = make(map[int]Sprite)
 
@@ -76,6 +97,72 @@ func main() {
 	}
 
 	systray.Run(onReady, onExit)
+}
+
+func stopRunningInstances() {
+	fmt.Println("Stopping all running instances.")
+
+	myPid := os.Getpid()
+
+	processes, err := process.Processes()
+	if err != nil {
+		panic(err)
+	}
+
+	for _, p := range processes {
+		name, err := p.Name()
+		if err != nil {
+			continue
+		}
+		if name == "traycat" && p.Pid != int32(myPid) {
+			err := p.SendSignal(syscall.SIGKILL)
+			if err != nil {
+				fmt.Printf("Failed to kill process %d (%s): %v\n", p.Pid, name, err)
+			} else {
+				fmt.Printf("Process %d (%s) killed successfully.\n", p.Pid, name)
+			}
+		}
+	}
+}
+
+func installScript() {
+	_, err := os.Stat("./traycat")
+	if os.IsNotExist(err) {
+		panic("You are trying to install traycat but there is no file called `traycat` in you current directory.")
+	} else if err != nil {
+		panic(err)
+	}
+
+	source, err := os.Open("./traycat")
+	if err != nil {
+		panic(err)
+	}
+	defer source.Close()
+
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
+	destination, err := os.Create(fmt.Sprintf("%s/.local/bin/traycat", homeDir))
+	if err != nil {
+		panic(err)
+	}
+	defer destination.Close()
+
+	written, err := io.Copy(destination, source)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Written:", written)
+}
+
+func autostartScript() {
+	_, err := os.Stat("~/.local/bin/traycat")
+	if os.IsNotExist(err) {
+		installScript()
+	} else if err != nil {
+		panic(err)
+	}
 }
 
 func onReady() {
